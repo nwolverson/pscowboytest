@@ -1,0 +1,9 @@
+{
+    "name": "ps",
+    "set": "erl-0.10.5",
+    "source": "https://github.com/purerl/package-sets.git",
+    "depends": [
+        "erl-cowboy",
+        "erl-jsone"
+    ]
+}
