@@ -1,8 +1,8 @@
 {application, pscowboytest,
- [{description, "An OTP application"},
+ [{description, "PureScript Cowboy test app"},
   {vsn, "0.1.0"},
   {registered, []},
-  {mod, { pscowboytest_app, []}},
+  {mod, { cowboyTestApp@ps, []}},
   {applications,
    [kernel
     ,stdlib
