@@ -1,20 +1,27 @@
-module Handler (init, terminate) where
+module Handler (init) where
 
 import Prelude
-import Erl.Cowboy.Handler (Handler)
-import Erl.Cowboy.Req (Ok, Req, StatusCode(..), ok, path, qs, reply)
-import Erl.Data.Tuple (Tuple3, tuple3)
+
+import Effect (Effect)
+import Effect.Console (log)
+import Effect.Uncurried (mkEffectFn2, mkEffectFn3)
+import Erl.Cowboy.Handlers.Simple (InitHandler, InitResult, TerminateHandler, initResult, terminateResult)
+import Erl.Cowboy.Req (Req, StatusCode(..), path, qs, reply)
 import Erl.Data.Map as M
 
-init :: forall a. Req -> a -> Tuple3 Ok Req Unit
-init req _ = handle req unit
+init :: forall a. InitHandler a Unit
+init = mkEffectFn2 \req _ -> handle req unit
 
-terminate :: forall a b c. a -> b -> c -> Ok
-terminate _ _ _ = ok
+terminate :: forall s. TerminateHandler s
+terminate = mkEffectFn3 \_ _ _ -> do
+  log "Terminating"
+  pure terminateResult
 
-handle :: forall a. Handler a
-handle req state =
+handle :: forall s. Req -> s -> Effect (InitResult s)
+handle req state = do
   let headers = M.singleton "content-type" "text/plain"
       response = "Hello! path is " <> path req <> " and query string is " <> qs req
-      req' = reply (StatusCode 200) headers response req
-  in tuple3 ok req' state
+  req' <- reply (StatusCode 200) headers response req 
+  log "Hello"
+  log $ "Handling path: " <> path req
+  pure $ initResult state req'

@@ -6,9 +6,8 @@ import Attribute (Attribute(..), ApplicationBehaviour)
 import Effect (Effect)
 import Effect.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
-import Erl.Atom (atom)
+import Erl.Atom (Atom, atom)
 import Erl.Cowboy (ProtoEnv(..), ProtoOpt(..), TransOpt(..), startClear, protocolOpts, env)
-import Erl.Cowboy.Req (Ok, ok)
 import Erl.Cowboy.Routes (compile, mod)
 import Erl.Data.List (nil, singleton, (:))
 import Erl.Data.Tuple (Tuple2, tuple2, tuple3, tuple4)
@@ -18,13 +17,17 @@ _behaviour = Attribute
 
 foreign import data Pid :: Type
 
-foreign import startLink :: Effect (Tuple2 Ok Pid)
+foreign import startLink :: Effect (Tuple2 Atom Pid)
 
-start :: forall a b. a -> b -> (Tuple2 Ok Pid)
+start :: forall a b. a -> b -> (Tuple2 Atom Pid)
 start _ _ = unsafePerformEffect do
-  let paths =  tuple3 "/json/[...]" (mod "jsonHandler@ps") nil
-               : tuple3 "/[...]" (mod "handler@ps") nil
-               : nil
+  let paths = tuple3 "/simple/[...]" (mod "loopHandler@ps") nil
+                : tuple3 "/simpleM/[...]" (mod "loopHandler@ps") nil
+                : tuple3 "/loop/[...]" (mod "loopHandler@ps") nil
+                : tuple3 "/rest/[...]" (mod "restHandler@ps") nil
+                : tuple3 "/ws/[...]" (mod "webSocketHandler@ps") nil
+                : tuple3 "/json/[...]" (mod "jsonHandler@ps") nil
+                : nil
       routes = singleton (tuple2 (atom "_") paths)
       dispatch = compile routes
       transOpts = Ip (tuple4 0 0 0 0) : Port 8082 : nil
@@ -40,8 +43,8 @@ start _ _ = unsafePerformEffect do
         : nil
   res <- startLink
   _ <- startClear (atom "http_listener") transOpts protoOpts
-  log "Started HTTP listener on port 8082. Try routes / and /json"
+  log "Started HTTP listener on port 8082. Try routes: /simple ; /simpleM ; /loop ; /rest ; /ws (websocket endpoint) ; /json"
   pure res
 
-stop :: forall a. a -> Ok
-stop _ = ok
+stop :: forall a. a -> Atom
+stop _ = atom "ok"

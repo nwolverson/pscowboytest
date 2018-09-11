@@ -8,6 +8,7 @@ REL=_build/default/rel/rel/bin/rel
 
 all:
 	make -C ps
+	mkdir -p src/ps
 	rm -f src/ps/*
 	cp ps/output/*/*.erl src/ps/
 	@$(REBAR) compile
