@@ -7,12 +7,15 @@ import Effect (Effect)
 import Effect.Class (liftEffect)
 import Effect.Uncurried (mkEffectFn2, mkEffectFn3)
 import Erl.Cowboy.Handler (HandlerM)
-import Erl.Cowboy.Handlers.Loop (InfoHandler, InfoResult, InitHandler, continue, initResult, stop)
+import Erl.Cowboy.Handlers.Loop (CowboyLoopBehaviour, InfoHandler, InfoResult, InitHandler, continue, cowboyLoopBehaviour, initResult, stop)
 import Erl.Cowboy.Req (StatusCode(..), streamReply)
 import Erl.Cowboy.Req.Monad as ReqM
 import Erl.Data.Binary.UTF8 as UTF8
 import Erl.Data.Map as Map
-  
+
+_behaviour :: CowboyLoopBehaviour
+_behaviour = cowboyLoopBehaviour { init, info }
+
 data Message = Hello | Goodbye
 
 foreign import sendMessage :: Message -> Effect Unit

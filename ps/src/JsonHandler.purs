@@ -4,12 +4,15 @@ import Prelude
 
 import Effect (Effect)
 import Effect.Uncurried (mkEffectFn2)
-import Erl.Cowboy.Handlers.Simple (InitHandler, InitResult, initResult)
+import Erl.Cowboy.Handlers.Simple (CowboyHandlerBehaviour, InitHandler, InitResult, cowboyHandlerBehaviour, initResult)
 import Erl.Cowboy.Req (Req, StatusCode(..), path, qs, reply)
 import Erl.Data.Jsone (jsonEmptyObject)
 import Erl.Data.Jsone.Encode.Combinators ((~>), (:=))
 import Erl.Data.Jsone.Printer (printJson)
 import Erl.Data.Map as M
+
+_behaviour :: CowboyHandlerBehaviour
+_behaviour = cowboyHandlerBehaviour { init }
 
 init :: forall a. InitHandler a Unit
 init = mkEffectFn2 \req _ -> handle req unit

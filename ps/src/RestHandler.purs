@@ -5,10 +5,13 @@ import Prelude
 import Effect.Console (log)
 import Effect.Uncurried (EffectFn2, mkEffectFn2)
 import Erl.Atom (atom)
-import Erl.Cowboy.Handlers.Rest (ContentType(..), ContentTypeParams(..), ContentTypesProvidedHandler, InitHandler, ProvideCallback(..), contentTypesProvidedResult, initResult, restResult)
+import Erl.Cowboy.Handlers.Rest (ContentType(..), ContentTypeParams(..), ContentTypesProvidedHandler, CowboyRestBehaviour, InitHandler, ProvideCallback(..), contentTypesProvidedResult, cowboyRestBehaviour, initResult, restResult)
 import Erl.Cowboy.Req (Req)
 import Erl.Data.List (fromFoldable)
 import Erl.Data.Tuple (Tuple3, tuple2, tuple3)
+
+_behaviour :: CowboyRestBehaviour
+_behaviour = cowboyRestBehaviour { init }
 
 init :: forall a. InitHandler a a
 init = mkEffectFn2 \req c -> pure (initResult c req)

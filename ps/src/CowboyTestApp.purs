@@ -2,7 +2,7 @@ module CowboyTestApp where
 
 import Prelude hiding (mod)
 
-import Attribute (Attribute(..), ApplicationBehaviour)
+import Attribute (Attribute(..), Behaviour)
 import Effect (Effect)
 import Effect.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
@@ -12,7 +12,7 @@ import Erl.Cowboy.Routes (compile, mod)
 import Erl.Data.List (nil, singleton, (:))
 import Erl.Data.Tuple (Tuple2, tuple2, tuple3, tuple4)
 
-_behaviour :: ApplicationBehaviour
+_behaviour :: Behaviour "application"
 _behaviour = Attribute
 
 foreign import data Pid :: Type

@@ -1,17 +1,16 @@
-module WebSocketHandler where
+module WebSocketHandler (init) where
 
 import Prelude
 
-import Attribute (Attribute(..), Behaviour)
 import Effect.Console (log)
 import Effect.Uncurried (mkEffectFn2)
-import Erl.Cowboy.Handlers.WebSocket (Frame(..), FrameHandler, InfoHandler, InitHandler, decodeInFrame, initResult, okResult, outFrame, replyResult)
+import Erl.Cowboy.Handlers.WebSocket (Frame(..), FrameHandler, InfoHandler, InitHandler, CowboyWebsocketBehaviour, cowboyWebsocketBehaviour, decodeInFrame, initResult, okResult, outFrame, replyResult)
 import Erl.Data.List (singleton)
 
 type HandlerState = Unit
 
-_behaviour :: Behaviour "cowboy_websocket"
-_behaviour = Attribute
+_behaviour :: CowboyWebsocketBehaviour
+_behaviour = cowboyWebsocketBehaviour { init, websocket_handle, websocket_info }
 
 init :: forall a. InitHandler a HandlerState
 init = mkEffectFn2 \req _ -> pure (initResult unit req)

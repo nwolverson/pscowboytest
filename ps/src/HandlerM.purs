@@ -1,41 +1,18 @@
 module HandlerM  where
 
--- import Prelude
-
--- import Control.Monad.State (class MonadState, StateT(..), State, execStateT, runStateT)
--- import Data.Tuple (Tuple(..))
--- import Effect (Effect)
--- import Effect.Class (class MonadEffect)
--- import Effect.Unsafe (unsafePerformEffect)
--- import Erl.Cowboy.Handler (Handler, Ok(..), HandlerM, runHandlerM)
--- import Erl.Cowboy.Req (Req, StatusCode(..))
--- import Erl.Cowboy.Req.Monad as ReqM
--- import Erl.Data.Map as M
-
-
 import Prelude
 
-import Control.Monad.State (runState, runStateT)
-import Data.Tuple (Tuple(..), uncurry)
+import Control.Monad.State (runStateT)
+import Data.Tuple (uncurry)
 import Effect.Uncurried (mkEffectFn2)
 import Erl.Cowboy.Handler (HandlerM, runHandlerM)
-import Erl.Cowboy.Handlers.Simple (InitHandler, initResult)
+import Erl.Cowboy.Handlers.Simple (CowboyHandlerBehaviour, InitHandler, cowboyHandlerBehaviour, initResult)
 import Erl.Cowboy.Req (StatusCode(..))
 import Erl.Cowboy.Req.Monad as ReqM
 import Erl.Data.Map as M
 
--- import Prelude
-
--- import Control.Monad.State (class MonadState, StateT(..), State, execStateT, runStateT)
--- import Data.Tuple (Tuple(..))
--- import Effect (Effect)
--- import Effect.Class (class MonadEffect)
--- import Effect.Unsafe (unsafePerformEffect)
--- import Erl.Cowboy.Handler (Handler, Ok(..), HandlerM, runHandlerM)
--- import Erl.Cowboy.Req (Req, StatusCode(..))
--- import Erl.Cowboy.Req.Monad as ReqM
--- import Erl.Data.Map as M
-
+_behaviour :: CowboyHandlerBehaviour
+_behaviour = cowboyHandlerBehaviour { init }
 
 data Config
 data HandlerState = HandlerState
@@ -43,6 +20,9 @@ data HandlerState = HandlerState
 init :: InitHandler Config HandlerState
 init = mkEffectFn2 \req config -> 
   uncurry initResult <$> runStateT (helloHandler config) req
+
+initAlt :: InitHandler Config HandlerState
+initAlt = mkEffectFn2 \req config -> runHandlerM initResult (helloHandler config) req
   
 helloHandler :: Config -> HandlerM HandlerState
 helloHandler config = do
