@@ -14,7 +14,6 @@ erl_crash.dump
 logs
 _build
 *.psc-ide-port
-*.psc-package
+.psc-package/
 output/
-bower_components/
-src/ps/
+src/compiled_ps/

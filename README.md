@@ -7,21 +7,11 @@ Build
 -----
 
 ```
-$ make
-```
-
-Create release
-----
-
-```
-$ rebar3 release
+$ rebar3 compile
 ```
 
 Run
 ---
 ```
-make start
-```
-```
-make stop
+$ rebar3 shell
 ```

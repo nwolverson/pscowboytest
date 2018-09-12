@@ -1,33 +1,25 @@
-PREFIX:=../
-DEST:=$(PREFIX)$(PROJECT)
+.PHONY: all ps ide clean erl
 
-REBAR=rebar3
-REL=_build/default/rel/rel/bin/rel
+PS_SRC = ps_src
+COMPILED_PS = src/compiled_ps
+OUTPUT = output
 
-.PHONY: all edoc test clean build_plt dialyzer app
+all: ps erl
 
-all:
-	make -C ps
-	mkdir -p src/ps
-	rm -f src/ps/*
-	cp ps/output/*/*.erl src/ps/
-	@$(REBAR) compile
+ide:
+	psc-package sources | xargs purs compile '$(PS_SRC)/**/*.purs' --json-errors
 
-stop:
-	$(REL) stop
+ps:
+	psc-package sources | xargs purs compile '$(PS_SRC)/**/*.purs'
 
-start:
-	$(REL) start
-
-edoc: all
-	@$(REBAR) doc
-
-test:
-	@rm -rf .eunit
-	@mkdir -p .eunit
-	@$(REBAR) eunit
+# Useful to update externs if sources won't compile
+ps-deps:
+	psc-package sources | xargs purs compile
 
 clean:
-	@$(REBAR) clean
-	rm -f src/ps/*
-	rm -rf ps/output/*
+	rm -rf $(OUTPUT)/*
+	rm -f $(COMPILED_PS)/*
+
+erl:
+	mkdir -p $(COMPILED_PS)
+	cp -pu $(OUTPUT)/*/*.erl $(COMPILED_PS)/
